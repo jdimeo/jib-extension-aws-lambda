@@ -6,7 +6,7 @@
 	<groupId>com.github.jdimeo</groupId>
 	<artifactId>jib-extension-aws-lambda</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>Google Jib plugin: Customizes the build plan for the convetion that AWS Java Lambda expects</description>
+	<description>Google Jib plugin: Customizes the build plan for the convention that AWS Java Lambda expects</description>
 
 	<properties>
 		<maven.compiler.release>17</maven.compiler.release>
