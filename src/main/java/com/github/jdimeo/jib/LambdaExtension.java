@@ -15,8 +15,10 @@ import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger.LogLevel;
 import com.google.cloud.tools.jib.plugins.extension.JibPluginExtensionException;
 
 public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
+	private Configuration config;
+	
 	@SuppressWarnings("unchecked")
-	private <L extends LayerObject> L modifyEntries(Configuration config, L layer) {
+	private <L extends LayerObject> L modifyEntries(L layer) {
 		var fileLayer = (FileEntriesLayer) layer;
 		
 		var entries = fileLayer.getEntries();
@@ -36,12 +38,12 @@ public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 	public ContainerBuildPlan extendContainerBuildPlan(ContainerBuildPlan buildPlan, Map<String, String> properties,
 			Optional<Configuration> extraConfig, MavenData mavenData, ExtensionLogger logger)
 			throws JibPluginExtensionException {
-		var config = extraConfig.orElseGet(Configuration::forAWSLambda);
+		config = extraConfig.orElseGet(Configuration::forAWSLambda);
 		
 		logger.log(LogLevel.LIFECYCLE, "Running AWS Lambda extension");
 		
 		var layers = buildPlan.getLayers();
-		layers.replaceAll(layer -> modifyEntries(config, layer));
+		layers.replaceAll(this::modifyEntries);
 		return buildPlan.toBuilder().setLayers(layers).build();
 	}
 	
