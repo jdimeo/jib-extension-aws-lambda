@@ -5,9 +5,11 @@ This Google Jib plugin extension customizes the build plan for the convention th
 By default, it relocates the following paths in the built image:
 
 ```
-/apps/classes* &rarr; /var/task*
-/apps/libs*    &rarr; /var/task/lib*
+/apps/classes* → /var/task*
+/apps/libs*    → /var/task/lib*
 ```
+
+See the "Usage" tab of the [Lambda images that AWS provides](https://gallery.ecr.aws/lambda/java).
 
 ## Advanced Configuration
 
