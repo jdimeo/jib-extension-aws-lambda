@@ -12,14 +12,11 @@ import com.google.cloud.tools.jib.api.buildplan.LayerObject;
 import com.google.cloud.tools.jib.maven.extension.JibMavenPluginExtension;
 import com.google.cloud.tools.jib.maven.extension.MavenData;
 import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger;
-import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger.LogLevel;
 import com.google.cloud.tools.jib.plugins.extension.JibPluginExtensionException;
 
 @AutoService(JibMavenPluginExtension.class)
 public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
-	private Configuration config;
-	
-	private FileEntriesLayer modifyEntries(FileEntriesLayer layer) {
+	private FileEntriesLayer modifyEntries(Configuration config, FileEntriesLayer layer) {
 		var entries = layer.getEntries();
 		entries.replaceAll(entry -> {
 			var path = entry.getExtractionPath().toString();
@@ -38,14 +35,12 @@ public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 			Optional<Configuration> extraConfig, MavenData mavenData, ExtensionLogger logger)
 			throws JibPluginExtensionException {
 		
-		config = extraConfig.orElseGet(Configuration::forAWSLambda);
-		
-		logger.log(LogLevel.LIFECYCLE, "Running AWS Lambda extension");
+		var config = extraConfig.orElseGet(Configuration::forAWSLambda);
 		
 		var layers = buildPlan.getLayers();
 		layers.replaceAll(layer -> {
 			if (layer instanceof FileEntriesLayer) {
-				return cast(modifyEntries((FileEntriesLayer) layer));
+				return cast(modifyEntries(config, (FileEntriesLayer) layer));
 			}
 			return layer;
 		});
