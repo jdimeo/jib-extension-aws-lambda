@@ -3,6 +3,7 @@ package com.github.jdimeo.jib;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.auto.service.AutoService;
 import com.google.cloud.tools.jib.api.buildplan.AbsoluteUnixPath;
 import com.google.cloud.tools.jib.api.buildplan.ContainerBuildPlan;
 import com.google.cloud.tools.jib.api.buildplan.FileEntriesLayer;
@@ -14,6 +15,7 @@ import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger;
 import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger.LogLevel;
 import com.google.cloud.tools.jib.plugins.extension.JibPluginExtensionException;
 
+@AutoService(JibMavenPluginExtension.class)
 public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 	private Configuration config;
 	
