@@ -17,11 +17,8 @@ import com.google.cloud.tools.jib.plugins.extension.JibPluginExtensionException;
 public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 	private Configuration config;
 	
-	@SuppressWarnings("unchecked")
-	private <L extends LayerObject> L modifyEntries(L layer) {
-		var fileLayer = (FileEntriesLayer) layer;
-		
-		var entries = fileLayer.getEntries();
+	private FileEntriesLayer modifyEntries(FileEntriesLayer layer) {
+		var entries = layer.getEntries();
 		entries.replaceAll(entry -> {
 			var path = entry.getExtractionPath().toString();
 			for (var r : config.getReplacements()) {
@@ -31,19 +28,25 @@ public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 				AbsoluteUnixPath.get(path), entry.getPermissions(), entry.getModificationTime(), entry.getOwnership());
 		});
 		
-		return (L) fileLayer.toBuilder().setEntries(entries).build();
+		return layer.toBuilder().setEntries(entries).build();
 	}
 	
 	@Override
 	public ContainerBuildPlan extendContainerBuildPlan(ContainerBuildPlan buildPlan, Map<String, String> properties,
 			Optional<Configuration> extraConfig, MavenData mavenData, ExtensionLogger logger)
 			throws JibPluginExtensionException {
+		
 		config = extraConfig.orElseGet(Configuration::forAWSLambda);
 		
 		logger.log(LogLevel.LIFECYCLE, "Running AWS Lambda extension");
 		
 		var layers = buildPlan.getLayers();
-		layers.replaceAll(this::modifyEntries);
+		layers.replaceAll(layer -> {
+			if (layer instanceof FileEntriesLayer) {
+				return cast(modifyEntries((FileEntriesLayer) layer));
+			}
+			return layer;
+		});
 		return buildPlan.toBuilder().setLayers(layers).build();
 	}
 	
@@ -51,4 +54,7 @@ public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
 	public Optional<Class<Configuration>> getExtraConfigType() {
 		return Optional.of(Configuration.class);
 	}
+	
+	@SuppressWarnings("unchecked")
+	private static <L extends LayerObject> L cast(LayerObject layer) { return (L) layer; }
 }
