@@ -59,7 +59,7 @@ Then register the extension with the Jib plugin:
 		<dependency>
 			<groupId>com.github.jdimeo</groupId>
 			<artifactId>jib-extension-aws-lambda</artifactId>
-			<version>0.1.0</version>
+			<version>0.2.0</version>
 		</dependency>
 	</dependencies>
 </plugin>
