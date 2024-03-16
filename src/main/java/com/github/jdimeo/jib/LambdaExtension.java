@@ -16,7 +16,7 @@ import com.google.cloud.tools.jib.plugins.extension.JibPluginExtensionException;
 
 @AutoService(JibMavenPluginExtension.class)
 public class LambdaExtension implements JibMavenPluginExtension<Configuration> {
-	private FileEntriesLayer modifyEntries(Configuration config, FileEntriesLayer layer) {
+	private static FileEntriesLayer modifyEntries(Configuration config, FileEntriesLayer layer) {
 		var entries = layer.getEntries();
 		entries.replaceAll(entry -> {
 			var path = entry.getExtractionPath().toString();
