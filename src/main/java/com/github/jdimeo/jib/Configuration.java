@@ -33,6 +33,7 @@ public class Configuration {
 		var ret = new Configuration();
 		ret.getReplacements().add(new Replace("/app/classes", "/var/task"));
 		ret.getReplacements().add(new Replace("/app/resources", "/var/task"));
+		ret.getReplacements().add(new Replace("/app/classpath", "/var/task/lib"));
 		ret.getReplacements().add(new Replace("/app/libs", "/var/task/lib"));
 		return ret;
 	}
